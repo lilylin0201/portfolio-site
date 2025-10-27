@@ -25,7 +25,7 @@ const Art = [
   {
     slug: "red1",
     imageSrc: "/art/red-feeling.jpg",
-    title: "RED searching",
+    title: "RED",
     type: "Painting",
   },
   {
