@@ -11,14 +11,14 @@ export default function Navbar() {
         <Link href={"https://medium.com/@lilylinthoughts"} target="_blank">
           Blog
         </Link>
-        <Link
+        {/* <Link
           href={
             "https://docs.google.com/document/d/11T7-AnpF1AxztrH9SLzjaVVp4UHLPhWz/edit?usp=sharing&ouid=108107892836613563663&rtpof=true&sd=true"
           }
           target="_blank"
         >
           CV
-        </Link>
+        </Link> */}
       </div>
     </div>
   );

@@ -11,94 +11,123 @@ declare global {
 
 const Art = [
   {
+    slug: "miami",
+    imageSrc: "/art/miami.jpg",
+    title: "Miami",
+    type: "Painting",
+    year: "2026",
+  },
+  {
+    slug: "ode-to-oyster",
+    imageSrc: "/art/oyster.jpg",
+    title: "Ode to Oyster",
+    type: "Painting",
+    year: "2026",
+  },
+  {
     slug: "light-of-the-world",
     imageSrc: "/art/light-of-the-world.jpg",
     title: "Light of the World",
     type: "Painting",
+    year: "2025",
   },
   {
     slug: "blue-and-orange",
     imageSrc: "/art/blue-and-orange.jpg",
     title: "Blue and Orange",
     type: "Painting",
+    year: "2025",
   },
   {
     slug: "red1",
     imageSrc: "/art/red-feeling.jpg",
     title: "RED",
     type: "Painting",
+    year: "2025",
   },
   {
     slug: "flowers1",
     imageSrc: "/art/flowers-1-new.jpg",
     title: "When Flowers Die, Will Love Die Too? (1)",
     type: "Painting",
+    year: "2025",
   },
   {
     slug: "flowers2",
     imageSrc: "/art/flowers-2.jpg",
     title: "When Flowers Die, Will Love Die Too? (2)",
     type: "Painting",
+    year: "2025",
   },
   {
     slug: "flowers3",
     imageSrc: "/art/flowers-3.jpg",
     title: "When Flowers Die, Will Love Die Too? (3)",
     type: "Painting",
+    year: "2025",
   },
   {
     slug: "flowers4",
     imageSrc: "/art/flowers-4.jpg",
     title: "When Flowers Die, Will Love Die Too? (4)",
     type: "Painting",
+    year: "2025",
   },
   {
     slug: "stretch",
     imageSrc: "/art/stretch-pastel.JPG",
     title: "Stretch",
     type: "Drawing",
+    year: "2023",
   },
   {
     slug: "home",
     imageSrc: "/art/home.jpg",
     title: "Home",
     type: "Drawing",
+    year: "2023",
   },
   {
     slug: "woman",
     imageSrc: "/art/woman.jpg",
     title: "What It Means to Be a Woman",
     type: "Painting",
+    year: "2022",
   },
   {
     slug: "contemporary-still-life",
     imageSrc: "/art/still-life.jpg",
     title: "Still-Life of Contemporary Objects",
     type: "Painting",
+    year: "2022",
   },
   {
     slug: "food-dipped-in-milk",
     imageSrc: "/art/milk.jpg",
     title: "Food Dipped In Milk",
     type: "Woodcut",
+    year: "2022",
   },
   {
     slug: "the-embrace",
     imageSrc: "/art/embrace-1.png",
     title: "The Embrace",
     type: "Sculpture",
+    year: "2022",
   },
   {
     slug: "boats1",
     imageSrc: "/art/day.jpg",
     title: "Boats (Day)",
     type: "Drawing",
+    year: "2020",
   },
   {
     slug: "boats2",
     imageSrc: "/art/night.jpg",
     title: "Boats (Night)",
     type: "Drawing",
+    year: "2020",
   },
 ];
 
@@ -129,6 +158,7 @@ function ArtGallery() {
     imageSrc: string;
     title: string;
     type: string;
+    year: string;
   };
 
   const [selectedArt, setSelectedArt] = useState<ArtItem | null>(null);
@@ -173,7 +203,7 @@ function ArtGallery() {
 
               <div className="mt-2">
                 <p className="font-bold uppercase">{art.title}</p>
-                <p className="text-sm text-gray-400 uppercase">{art.type}</p>
+                <p className="text-sm text-gray-400 uppercase">{art.year}</p>
               </div>
             </div>
           );
@@ -217,7 +247,7 @@ function DesignGallery() {
 }
 
 export default function Gallery({ hideSwitcher }: { hideSwitcher: boolean }) {
-  const [activeGallery, setActiveGallery] = useState("design");
+  const [activeGallery, setActiveGallery] = useState("art");
 
   useEffect(() => {
     window.__nextGalleryComponent = {

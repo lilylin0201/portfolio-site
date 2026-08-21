@@ -1,6 +1,18 @@
 import Image from "next/image";
 
 export default function Blurb() {
+  const handleArtClick = () => {
+    // Get gallery element
+    if (window.__nextGalleryComponent?.setActiveGallery) {
+      window.__nextGalleryComponent.setActiveGallery("art");
+    }
+
+    const galleryElement = document.querySelector("#gallery-section");
+    if (galleryElement) {
+      galleryElement.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   const handleDesignClick = () => {
     // Get gallery element
     const galleryElement = document.querySelector("#gallery-section");
@@ -11,18 +23,6 @@ export default function Blurb() {
     }
 
     // Scroll to gallery
-    if (galleryElement) {
-      galleryElement.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  const handleArtClick = () => {
-    // Get gallery element
-    if (window.__nextGalleryComponent?.setActiveGallery) {
-      window.__nextGalleryComponent.setActiveGallery("art");
-    }
-
-    const galleryElement = document.querySelector("#gallery-section");
     if (galleryElement) {
       galleryElement.scrollIntoView({ behavior: "smooth" });
     }
