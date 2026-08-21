@@ -89,27 +89,6 @@ export default function Home() {
     };
   }, []);
 
-//   return (
-//     <>
-//   <Navbar />
-//   <div className="h-screen overflow-y-auto snap-y snap-mandatory scroll-smooth">
-    
-//     {/* Landing */}
-//     <div className="h-screen snap-start">
-//       <Blurb />
-//     </div>
-//     {/* Gallery */}
-//     <div className="h-screen snap-start overflow-y-auto" id="gallery-section">
-//       <div className="min-h-screen flex flex-col">
-//         <Gallery hideSwitcher={hideSwitcher} />
-//         <Footer />
-//       </div>
-//     </div>
-
-//   </div>
-// </>
-//   );
-
     return (
     <>
   <Navbar />
