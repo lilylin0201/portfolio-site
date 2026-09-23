@@ -1,6 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
-import { Redis } from "@upstash/redis";
+import { kv as redisClient } from "./kv";
 import { del } from "@vercel/blob";
 import type { JournalDoc, StorageMode, Week, WeekMeta } from "./types";
 import { isISODate, sortWeeksNewestFirst, weekTitle } from "./dates";
@@ -8,8 +8,7 @@ import { isISODate, sortWeeksNewestFirst, weekTitle } from "./dates";
 /*
  * Where things live
  * -----------------
- * Written text  -> Upstash Redis (free tier, via the Vercel Marketplace).
- *                  Cheap to autosave into, so typing never burns through limits.
+ * Written text  -> Redis (the database you connected in Vercel's Storage tab).
  * Photos/videos -> Vercel Blob. Stored outside your deployments, so they do NOT
  *                  count toward the Deployment Storage that filled up before.
  *
@@ -26,27 +25,24 @@ export const LOCAL_MEDIA = path.join(LOCAL_DIR, "media");
 
 export class SetupError extends Error {}
 
-function redisClient(): Redis | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
-}
-
 export function textStorageMode(): StorageMode {
   return redisClient() ? "cloud" : "local";
 }
 
+// "cloud": Blob store with a read-write token. "presigned": newer Blob stores that
+// sign in with Vercel's built-in identity (BLOB_STORE_ID) instead of a token.
 export function mediaStorageMode(): StorageMode {
-  return process.env.BLOB_READ_WRITE_TOKEN ? "cloud" : "local";
+  if (process.env.BLOB_READ_WRITE_TOKEN) return "cloud";
+  if (process.env.BLOB_STORE_ID) return "presigned";
+  return "local";
 }
 
 // Vercel's servers can't save files to disk, so local mode only works on your laptop.
 export function setupProblems(): string[] {
   if (!process.env.VERCEL) return [];
   const problems: string[] = [];
-  if (!redisClient()) problems.push("Connect an Upstash Redis database (Storage tab) so your writing can be saved.");
-  if (!process.env.BLOB_READ_WRITE_TOKEN) problems.push("Connect a Vercel Blob store (Storage tab) so photos and videos can be uploaded.");
+  if (!redisClient()) problems.push("Connect a Redis database (Storage tab) so your writing can be saved.");
+  if (mediaStorageMode() === "local") problems.push("Connect a Vercel Blob store (Storage tab) so photos and videos can be uploaded.");
   if (!process.env.JOURNAL_PASSWORD) problems.push("Add a JOURNAL_PASSWORD environment variable so only you can edit.");
   return problems;
 }
@@ -81,8 +77,8 @@ async function readAllLocal(): Promise<Week[]> {
 export async function listWeeks(): Promise<WeekMeta[]> {
   const redis = redisClient();
   if (!redis) return sortWeeksNewestFirst((await readAllLocal()).map(metaOf));
-  const all = await redis.hgetall<Record<string, WeekMeta>>(INDEX_KEY);
-  return sortWeeksNewestFirst(Object.values(all ?? {}));
+  const all = await redis.hgetall<WeekMeta>(INDEX_KEY);
+  return sortWeeksNewestFirst(Object.values(all));
 }
 
 export async function getWeek(id: string): Promise<Week | null> {
@@ -95,7 +91,7 @@ export async function getWeek(id: string): Promise<Week | null> {
       return null;
     }
   }
-  return (await redis.get<Week>(weekKey(id))) ?? null;
+  return redis.get<Week>(weekKey(id));
 }
 
 /* ---------------- writing ---------------- */
@@ -109,7 +105,7 @@ async function writeWeek(week: Week): Promise<void> {
     return;
   }
   await redis.set(weekKey(week.id), week);
-  await redis.hset(INDEX_KEY, { [week.id]: metaOf(week) });
+  await redis.hset(INDEX_KEY, week.id, metaOf(week));
 }
 
 type Content = { title?: unknown; doc?: unknown; html?: unknown };
@@ -188,7 +184,7 @@ function mediaUrlsIn(text: string): string[] {
 
 async function deleteMedia(urls: string[]) {
   const blobUrls = urls.filter((u) => u.startsWith("https://"));
-  if (blobUrls.length && process.env.BLOB_READ_WRITE_TOKEN) await del(blobUrls).catch(() => {});
+  if (blobUrls.length && mediaStorageMode() !== "local") await del(blobUrls).catch(() => {});
   const localNames = urls.filter((u) => u.startsWith("/api/journal/media/")).map((u) => u.split("/").pop()!);
   await Promise.all(localNames.map((n) => fs.rm(path.join(LOCAL_MEDIA, n), { force: true }).catch(() => {})));
 }

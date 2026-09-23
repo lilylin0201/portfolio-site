@@ -10,7 +10,7 @@ Your site now has a weekly journal at **yoursite.com/journal**.
 Open your project in the Vercel dashboard, then:
 
 1. **Storage → Create → Blob.** Name it `journal-media` and choose **Public** access. Connect it to this project. This is where photos and videos go. It's free up to 1 GB and **doesn't count toward your deployment storage**.
-2. **Storage → Create → Upstash (Redis).** Pick the **Free** plan and connect it to this project. This is where your writing goes.
+2. **Storage → Create → Redis.** Pick the free plan and connect it to this project. This is where your writing goes. Either a `REDIS_URL` or Upstash's `KV_REST_API_*` variables work.
 3. **Settings → Environment Variables.** Add `JOURNAL_PASSWORD` with a long password only you know.
 4. **Deployments → ⋯ on the latest one → Redeploy**, so the site picks up steps 1 to 3.
 

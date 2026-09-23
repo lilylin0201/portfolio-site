@@ -1,6 +1,6 @@
 "use client";
 
-import { upload } from "@vercel/blob/client";
+import { upload, uploadPresigned } from "@vercel/blob/client";
 import type { Editor } from "@tiptap/react";
 import type { Node as PMNode } from "@tiptap/pm/model";
 import { ALLOWED_MEDIA_TYPES, MAX_UPLOAD_BYTES } from "@/lib/journal/media";
@@ -43,6 +43,16 @@ async function uploadFile(file: File, weekId: string, mode: StorageMode): Promis
     throw new Error(`"${file.name}" is over 100 MB. Upload it to YouTube or Vimeo and paste the link instead.`);
   }
   const safeName = file.name.replace(/[^\w.-]+/g, "-").toLowerCase();
+  if (mode === "presigned") {
+    // Newer stores don't add a random ending themselves, so add one to keep names unique.
+    const unique = safeName.replace(/(\.[^.]+)?$/, `-${Math.random().toString(36).slice(2, 10)}$1`);
+    const blob = await uploadPresigned(`journal/${weekId}/${unique}`, file, {
+      access: "public",
+      handleUploadUrl: "/api/journal/upload",
+      contentType: file.type,
+    });
+    return blob.url;
+  }
   if (mode === "cloud") {
     const blob = await upload(`journal/${weekId}/${safeName}`, file, {
       access: "public",

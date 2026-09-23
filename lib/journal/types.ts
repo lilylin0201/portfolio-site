@@ -18,4 +18,4 @@ export interface Week extends WeekMeta {
   html: string; // what the public page shows
 }
 
-export type StorageMode = "cloud" | "local";
+export type StorageMode = "cloud" | "presigned" | "local";
