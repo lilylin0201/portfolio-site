@@ -27,3 +27,170 @@ body {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+/* ------------------------------------------------------------------
+   Journal: shared by the editor and the public pages so they match.
+   All text sizes are fixed here.
+   ------------------------------------------------------------------ */
+.journal-title {
+  font-size: 1.75rem;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #0000ff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.journal-content {
+  font-size: 1.0625rem; /* Body */
+  line-height: 1.7;
+  color: #1f1f1f;
+  overflow-wrap: anywhere;
+}
+.journal-content > * + * { margin-top: 0.6em; }
+.journal-content > :first-child { margin-top: 0; }
+.journal-content h2 { font-size: 1.375rem; font-weight: 700; line-height: 1.35; margin-top: 1.5em; } /* Heading */
+.journal-content h3 { font-size: 1.125rem; font-weight: 700; line-height: 1.4; margin-top: 1.4em; } /* Subheading */
+.journal-content p.jdesc,
+.journal-content figcaption,
+.jcaption-input { font-size: 0.95rem; font-style: italic; color: #80868b; } /* Description */
+.journal-content a { color: #0000ff; text-decoration: underline; }
+.journal-content ul { list-style: disc; padding-left: 1.6em; }
+.journal-content ol { list-style: decimal; padding-left: 1.6em; }
+.journal-content ul ul { list-style: circle; }
+.journal-content li > p { margin: 0.15em 0; }
+.journal-content hr { border: none; border-top: 1px solid #9aa0a6; margin: 2em 0; }
+
+/* Photo rows: one photo, or two side by side at the same height */
+.jrow { display: flex; gap: 12px; margin: 1.4em auto; max-width: 100%; position: relative; align-items: flex-start; }
+.jrow-1 .jphoto { flex: 1 1 0%; }
+.jrow-2 .jphoto { flex: 1 1 0%; }
+.jphoto { margin: 0; min-width: 0; }
+.jphoto img { display: block; width: 100%; height: auto; border-radius: 2px; }
+@media (max-width: 640px) { .jrow-1 { width: 100% !important; } .jrow { gap: 8px; } }
+.journal-content figcaption,
+.jcaption-input { display: block; width: 100%; margin-top: 0.4em; background: transparent; outline: none; line-height: 1.4; }
+
+/* Videos */
+.jvideo { margin: 1.4em 0; }
+.jvideo-frame { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 2px; overflow: hidden; }
+.jvideo-frame iframe, .jvideo-frame video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+/* ---------- editing only ---------- */
+.journal-editing { min-height: 50vh; padding-bottom: 4rem; }
+.journal-editing .is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  color: #b0b4b9;
+}
+.journal-editing .jphoto-media { position: relative; cursor: grab; }
+.journal-editing .jphoto-media:active { cursor: grabbing; }
+.journal-editing .jrow.is-selected .jphoto-media,
+.journal-editing .jvideo.is-selected .jvideo-frame { outline: 2px solid #0000ff; outline-offset: 2px; }
+.jrow.drop-left::before,
+.jrow.drop-right::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 4px;
+  background: #0000ff;
+}
+.jrow.drop-left::before { left: -8px; }
+.jrow.drop-right::after { right: -8px; }
+.jphoto-remove, .jphoto-grip {
+  position: absolute;
+  top: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  color: #333;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.jphoto-remove { right: 6px; }
+.jphoto-grip { left: 6px; pointer-events: none; }
+.jphoto-media:hover .jphoto-remove, .jphoto-media:hover .jphoto-grip { opacity: 1; }
+.jrow-tools {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  gap: 2px;
+  padding: 3px;
+  white-space: nowrap;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  z-index: 5;
+}
+.jrow.is-selected .jrow-tools { display: flex; }
+.jrow-tools button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: #333;
+}
+.jrow-tools button:hover { background: #f0f0ff; color: #0000ff; }
+.jrow-resize {
+  position: absolute;
+  top: 50%;
+  right: -14px;
+  width: 8px;
+  height: 48px;
+  transform: translateY(-50%);
+  border-radius: 999px;
+  background: #0000ff;
+  cursor: ew-resize;
+  opacity: 0;
+  transition: opacity 0.15s;
+  touch-action: none;
+}
+.jrow:hover .jrow-resize, .jrow.is-selected .jrow-resize { opacity: 0.85; }
+.jrow-width-label {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-size: 12px;
+}
+.jvideo-shield { position: absolute; inset: 0; cursor: pointer; }
+.jfigure-tools {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  z-index: 2;
+}
+.jfigure-tools button { width: 28px; height: 28px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.jupload-badge {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.ProseMirror-selectednode { outline: none; }
