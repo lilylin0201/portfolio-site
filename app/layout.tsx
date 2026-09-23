@@ -11,9 +11,9 @@ const figtree = Figtree({
 export const metadata: Metadata = {
   title: "Lily Lin",
   description: "Lily's Design and Art Portfolio",
-  icons: {
-    icon: "/favicon.png",
-  },
+  // icons: {
+  //   icon: "/favicon.png",
+  // },
 };
 
 export default function RootLayout({
